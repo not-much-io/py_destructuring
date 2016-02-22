@@ -28,6 +28,11 @@ class TestDestructuring(TestCase):
         return [first_type] + cd_types + [regular_param] + list(args)
 
     def test_tuple_advanced(self):
+        # Tests if:
+        #   Type hints continue working.
+        #   Destructuring works in random position
+        #   Regular positional parameters are unaffected
+        #   Variable number arguments are unaffected
         res = self.types_seq(tuple,             # First type, with type hint
                              self.object_dict,  # Dictionary
                              list,              # Regular positional parameter
