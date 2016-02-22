@@ -23,7 +23,10 @@ class TestDestructuring(TestCase):
 
     @staticmethod
     @destructure
-    def types_seq(first_type: type, cd: ("obj1", "obj2", "obj3"), regular_param, *args) -> list:
+    def types_seq(first_type: type,                 # With type hint
+                  cd: ("obj1", "obj2", "obj3"),     # Destructuring
+                  regular_param,                    # Regular positional argument
+                  *args) -> list:                   # Variable number arguments + return type (unlikely to be affected)
         cd_types = [type(o) for o in (obj1, obj2, obj3)]
         return [first_type] + cd_types + [regular_param] + list(args)
 
@@ -33,14 +36,18 @@ class TestDestructuring(TestCase):
         #   Destructuring works in random position
         #   Regular positional parameters are unaffected
         #   Variable number arguments are unaffected
-        res = self.types_seq(tuple,             # First type, with type hint
-                             self.object_dict,  # Dictionary
-                             list,              # Regular positional parameter
-                             int, str, str)     # Variable number arguments
-        self.assertEqual(res, [tuple,                   # First type, with type hint
-                               int, str, FunctionType,  # Destructured dictionary
-                               list,                    # Regular positional argument
-                               int, str, str])          # From variable number arguments
+        try:
+            res = self.types_seq(tuple,
+                                 self.object_dict,
+                                 list,
+                                 int, str, str)
+        except NameError:
+            raise AssertionError("A NameError was raised, destructured vars"
+                                 " were probably not made available to function scope")
+        self.assertEqual(res, [tuple,
+                               int, str, FunctionType,
+                               list,
+                               int, str, str])
 
     # ToDo test destructuring with dictionary expression
 
